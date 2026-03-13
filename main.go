@@ -1,3 +1,5 @@
+//go:build linux
+
 package main
 
 import (
@@ -16,5 +18,5 @@ func setupFlags() {
 func main() {
 	setupFlags()
 	log.Println("rolling the redis")
-	server.RunSyncTCPServer()
+	server.RunAsyncTCPServer()
 }
