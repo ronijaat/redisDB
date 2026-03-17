@@ -5,6 +5,7 @@ package server
 import (
 	"log"
 	"net"
+	"time"
 
 	"golang.org/x/sys/unix"
 
@@ -13,6 +14,8 @@ import (
 )
 
 var con_clients int = 0
+var cronFrequency time.Duration = time.Second * 1
+var lastCronExecTime time.Time = time.Now()
 
 func RunAsyncTCPServer() error {
 	log.Println("starting an asynchronous TCP server on", config.HOST, config.PORT)
@@ -73,6 +76,11 @@ func RunAsyncTCPServer() error {
 	}
 
 	for {
+		if time.Now().After(lastCronExecTime.Add(cronFrequency)) {
+			core.DeleteExpiredKeys()
+			lastCronExecTime = time.Now()
+		}
+
 		// see if any FD is ready for an IO
 		nevents, err := unix.EpollWait(epollFD, events[:], -1)
 		if err != nil {
