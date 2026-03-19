@@ -111,7 +111,7 @@ func RunAsyncTCPServer() error {
 				}
 			} else {
 				comm := core.FDComm{Fd: int(events[i].Fd)}
-				cmd, err := readCommand(comm)
+				cmd, err := readCommands(comm)
 				if err != nil {
 					unix.Close(int(events[i].Fd))
 					con_clients -= 1
